@@ -123,7 +123,8 @@ class SpecialContact extends UnlistedSpecialPage {
 			$this->requireNamedUser( 'contactpage-mustbeloggedin' );
 		}
 
-		if ( !$config['RecipientUser'] ) {
+		// Display error if no recipient specified in configuration
+		if ( !$config['RecipientUser'] && !$config['RecipientEmail'] ) {
 			$this->getOutput()->showErrorPage( 'contactpage-config-error-title',
 				'contactpage-config-error' );
 			return;
@@ -131,10 +132,13 @@ class SpecialContact extends UnlistedSpecialPage {
 
 		$user = $this->getUser();
 
-		$recipient = User::newFromName( $config['RecipientUser'] );
-		if ( $recipient === null || !$recipient->canReceiveEmail() ) {
-			$this->getOutput()->showErrorPage( 'noemailtitle', 'noemailtext' );
-			return;
+		// Display error if recipient has email disabled
+		if ( $config['RecipientUser'] ) {
+			$recipient = User::newFromName( $config['RecipientUser'] );
+			if ( $recipient === null || !$recipient->canReceiveEmail() ) {
+				$this->getOutput()->showErrorPage( 'noemailtitle', 'noemailtext' );
+				return;
+			}
 		}
 
 		// Blocked users cannot use the contact form if they're disabled from sending email.
@@ -273,7 +277,7 @@ class SpecialContact extends UnlistedSpecialPage {
 			$output->setPageTitle( $this->msg( $this->getFormSpecificMessageKey( 'emailsent' ) ) );
 			$output->addWikiMsg(
 				$this->getFormSpecificMessageKey( 'emailsenttext' ),
-				$recipient
+				$recipient ?? $config['RecipientEmail']
 			);
 
 			$output->returnToMain( false );
@@ -312,8 +316,14 @@ class SpecialContact extends UnlistedSpecialPage {
 		$senderIP = $request->getIP();
 
 		// Setup user that is going to receive the contact page response
-		$contactRecipientUser = User::newFromName( $config['RecipientUser'] );
-		$contactRecipientAddress = MailAddress::newFromUser( $contactRecipientUser );
+		if ( $config['RecipientUser'] ) {
+			$contactRecipientUser = User::newFromName( $config['RecipientUser'] );
+			$contactRecipientAddress = MailAddress::newFromUser( $contactRecipientUser );
+			$ccName = $contactRecipientUser->getName();
+		} else {
+			$ccName = $config['RecipientName'] ?? $this->getConfig()->get( 'Sitename' );
+			$contactRecipientAddress = new MailAddress( $config['RecipientEmail'] );
+		}
 
 		// Used when user hasn't set an email, when $wgUserEmailUseReplyTo is true,
 		// or when sending CC email to user
@@ -483,7 +493,7 @@ class SpecialContact extends UnlistedSpecialPage {
 		// if the user requested a copy of this mail, do this now,
 		// unless they are emailing themselves, in which case one copy of the message is sufficient.
 		if ( $formData['CCme'] && $fromUserAddress ) {
-			$cc_subject = $this->msg( 'emailccsubject', $contactRecipientUser->getName(), $subject )->text();
+			$cc_subject = $this->msg( 'emailccsubject', $ccName, $subject )->text();
 			if ( $hookRunner->onContactForm(
 				$fromUserAddress, $senderAddress, $cc_subject, $text, $this->formType, $formData )
 			) {
