@@ -4,9 +4,9 @@
 			"Cekli829",
 			"DannyS712",
 			"Eldarado",
+			"Nemoralis",
 			"Turkmen",
-			"Wertuose",
-			"Nemoralis"
+			"Wertuose"
 		]
 	},
 	"contactpage": "Bizimlə əlaqə",
@@ -25,5 +25,7 @@
 	"contactpage-captcha-error": "CAPTCHA xətası",
 	"contactpage-config-error-title": "Əlaqə forması xətası",
 	"contactpage-config-error": "Əlaqə forması ya bu səhifə üçün konfiqurasiya edilməyib, ya da səhv konfiqurasiya edilib.",
-	"contactpage-mustbeloggedin": "Əlaqə formasını göndərmək üçün daxil olun."
+	"contactpage-mustbeloggedin": "Əlaqə formasını göndərmək üçün daxil olun.",
+	"contactpage-musthaveemail-error-title": "Təsdiqlənmiş e-poçt ünvanı çatışmır",
+	"contactpage-musthaveemail-error": "Əlaqə formasını göndərmək üçün [[Special:Preferences|nizamlamalar]]ınızda təsdiqlənmiş e-poçt ünvanı təyin edin."
 }

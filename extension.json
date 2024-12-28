@@ -10,7 +10,7 @@
 	"license-name": "GPL-2.0-or-later",
 	"type": "specialpage",
 	"requires": {
-		"MediaWiki": ">= 1.41"
+		"MediaWiki": ">= 1.43"
 	},
 	"ExtensionMessagesFiles": {
 		"ContactPageAliases": "ContactPage.alias.php"
@@ -32,6 +32,12 @@
 					"RequireDetails": false,
 					"IncludeIP": false,
 					"MustBeLoggedIn": false,
+					"MustHaveEmail": false,
+					"NameReadonly": false,
+					"EmailReadonly": false,
+					"SubjectReadonly": false,
+					"UseCustomBlockMessage": false,
+					"Redirect": null,
 					"RLModules": [],
 					"RLStyleModules": [],
 					"AdditionalFields": {
@@ -50,7 +56,8 @@
 		"Contact": {
 			"class": "MediaWiki\\Extension\\ContactPage\\SpecialContact",
 			"services": [
-				"UserOptionsLookup"
+				"UserOptionsLookup",
+				"UserFactory"
 			]
 		}
 	},
